@@ -1,0 +1,3 @@
+# Not for indexing while the full database is unpublished.
+User-agent: *
+Disallow: /

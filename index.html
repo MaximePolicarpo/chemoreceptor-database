@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Vertebrate Chemoreceptor Repertoire Database</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="site-head">
+  <div class="wrap">
+    <h1>Vertebrate Chemoreceptor Repertoire Database</h1>
+    <p class="tagline">
+      Olfactory (OR, V1R, V2R, TAAR) and taste (T1R, T2R) receptor repertoires
+      mined from vertebrate genome assemblies, with genome BUSCO completeness and
+      NCBI taxonomy.
+    </p>
+    <div id="stat-strip" class="stat-strip"></div>
+  </div>
+</header>
+
+<div class="notice">
+  <div class="wrap">
+    <p>
+      <span class="notice-tag">Under construction</span>
+      <span id="scope-note"></span>
+      Receptors were mined with a new pipeline that is still being validated, so
+      counts and sequences may change. In the meantime, if you use these data
+      please cite
+      <a href="https://doi.org/10.1038/s41467-024-45500-y" target="_blank" rel="noopener">Policarpo&nbsp;et&nbsp;al.&nbsp;2024</a>,
+      <em>Nat&nbsp;Commun</em>&nbsp;<strong>15</strong>, 1421.
+    </p>
+  </div>
+</div>
+
+<main class="wrap">
+  <section class="layout">
+    <aside class="filters" id="filters">
+      <div class="filter-head">
+        <h2>Filters</h2>
+        <button id="reset-filters" class="linkish" type="button">reset</button>
+      </div>
+
+      <label class="fld">
+        <span>Search species / accession</span>
+        <input type="search" id="q" placeholder="e.g. Danio rerio, GCA_049306965">
+      </label>
+
+      <div class="fld">
+        <span>Min. BUSCO completeness (C %)</span>
+        <div class="slider-row">
+          <input type="range" id="busco-min" min="0" max="100" step="1" value="0">
+          <output id="busco-min-out">0%</output>
+        </div>
+        <label class="chk"><input type="checkbox" id="busco-required"> has BUSCO result</label>
+      </div>
+
+      <fieldset class="fld">
+        <span>Vertebrate clade</span>
+        <div id="clade-facets" class="facets"></div>
+      </fieldset>
+
+      <label class="fld">
+        <span>Order</span>
+        <input list="order-list" id="order" placeholder="any order">
+        <datalist id="order-list"></datalist>
+      </label>
+
+      <fieldset class="fld">
+        <span>Assembly level</span>
+        <div id="level-facets" class="facets"></div>
+      </fieldset>
+
+      <fieldset class="fld">
+        <span>Receptor family present (&ge; 1 functional)</span>
+        <div id="family-facets" class="facets facets-inline"></div>
+      </fieldset>
+
+      <label class="chk"><input type="checkbox" id="tax-required"> resolved taxonomy only</label>
+      <label class="chk"><input type="checkbox" id="complete-required"> complete mining run only</label>
+    </aside>
+
+    <section class="results">
+      <div class="results-bar">
+        <div id="count-line" class="count-line"></div>
+        <div class="results-actions">
+          <label class="inline">Rows
+            <select id="page-size">
+              <option>50</option><option>100</option><option>250</option><option>500</option>
+            </select>
+          </label>
+          <button id="export-tsv" type="button">Export table (TSV)</button>
+        </div>
+      </div>
+
+      <div class="download-bar" id="download-bar" hidden>
+        <span id="sel-count"></span>
+        <label class="inline">Sequences
+          <select id="dl-kind">
+            <option value="both">functional + pseudogenes</option>
+            <option value="functional">functional only</option>
+            <option value="pseudogenes">pseudogenes only</option>
+          </select>
+        </label>
+        <label class="inline">As
+          <select id="dl-format">
+            <option value="zip">ZIP (one file pair per species)</option>
+            <option value="merged">single merged FASTA per kind</option>
+            <option value="script">download script (curl)</option>
+          </select>
+        </label>
+        <button id="dl-go" type="button" class="primary">Download selected</button>
+        <button id="sel-clear" type="button" class="linkish">clear</button>
+        <progress id="dl-progress" hidden max="100" value="0"></progress>
+        <span id="dl-msg" class="dl-msg"></span>
+      </div>
+
+      <div class="table-scroll">
+        <table id="grid">
+          <thead><tr id="head-row"></tr></thead>
+          <tbody id="body"></tbody>
+        </table>
+      </div>
+
+      <div class="pager">
+        <button id="prev" type="button">&larr; Prev</button>
+        <span id="page-info"></span>
+        <button id="next" type="button">Next &rarr;</button>
+      </div>
+    </section>
+  </section>
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="cite">
+      <h2>Citation</h2>
+      <p>This database is under construction; receptors were re-mined with a new
+      pipeline currently under validation. Until the corresponding paper is out,
+      please cite:</p>
+      <p class="ref">
+        Policarpo M, Baldwin MW, Casane D, <em>et al.</em>
+        Diversity and evolution of the vertebrate chemoreceptor gene repertoire.
+        <em>Nature Communications</em> <strong>15</strong>, 1421 (2024).
+        <a href="https://doi.org/10.1038/s41467-024-45500-y" target="_blank" rel="noopener">https://doi.org/10.1038/s41467-024-45500-y</a>
+      </p>
+    </div>
+    <p id="foot-meta"></p>
+    <p>
+      Sequences are nucleotide CDS. Downloads are grouped as
+      <code>functional.fa</code> / <code>pseudogenes.fa</code> per genome;
+      FASTA headers are prefixed with the receptor family.
+    </p>
+  </div>
+</footer>
+
+<script src="config.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>
