@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-25 12:53 UTC",
+ "generated_at": "2026-09-25 12:57 UTC",
  "scope_note": "This preview covers 100 ray-finned fish species, chosen for strong genome completeness and available olfactory-epithelium (OE) morphology data (100 of the 100 shown here; REF column / hover the OE column for the source, including 12 species from an unpublished Lake Tanganyika cichlid dataset). In total I have mined chemoreceptor repertoires from 2,400 ray-finned fish genome assemblies, and compiled OE morphology data for 1,577 ray-finned fish species (from 332 distinct references), as well as olfactory bulb morphology for 310 species (from 21 distinct references).",
  "n_genomes": 100,
  "n_species": 100,

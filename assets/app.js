@@ -64,17 +64,34 @@ const COLS = [
     render: (g) => txt(g.cl || "—") },
   { key: "o", label: "Order", val: (g) => g.o || "￿",
     render: (g) => txt(g.o || "—") },
-  { key: "oesh", label: "Olfactory epithelium", val: (g) => g.oesh || "￿",
+  { key: "oesh", label: "OE shape", headerTitle: "Olfactory epithelium shape",
+    val: (g) => g.oesh || "￿",
     render: (g) => {
       if (!g.oesh) return txt("—");
       const s = document.createElement("span");
       s.className = "pill";
       s.textContent = prettyOE(g.oesh);
-      const bits = [];
-      if (g.oelam != null) bits.push(`~${g.oelam} lamellae`);
-      if (g.oesurf != null) bits.push(`${g.oesurf} mm² surface`);
-      if (g.oeref) bits.push(g.oeref);
-      s.title = bits.join("  ·  ");
+      if (g.oesurf != null) s.title = `${g.oesurf} mm² surface area`;
+      return s;
+    } },
+  { key: "oelam", label: "OE lamellae", cls: "num",
+    headerTitle: "Number of folds/lamellae in the olfactory epithelium "
+      + "(mean across specimens where more than one was measured)",
+    val: (g) => (g.oelam == null ? -1 : g.oelam),
+    render: (g) => {
+      if (g.oelam == null) return txt("—");
+      const s = txt(g.oelam.toFixed(1));
+      if (g.oen > 1) s.title = `mean of ${g.oen} specimens`;
+      return s;
+    } },
+  { key: "oeref", label: "OE ref", headerTitle: "Source reference for the olfactory-epithelium data",
+    val: (g) => g.oeref || "￿",
+    render: (g) => {
+      if (!g.oeref) return txt("—");
+      const s = document.createElement("span");
+      s.className = "oe-ref";
+      s.textContent = g.oeref;
+      s.title = g.oeref;
       return s;
     } },
   { key: "bc", label: "BUSCO C%", val: (g) => (g.bc == null ? -1 : g.bc), cls: "num",
@@ -317,6 +334,7 @@ function renderHead() {
       th.appendChild(cb);
     } else {
       th.textContent = c.label;
+      if (c.headerTitle) th.title = c.headerTitle;
       if (c.sort !== false && c.val) {
         if (state.sort.key === c.key) {
           const ar = document.createElement("span");
@@ -468,7 +486,7 @@ function exportTSV() {
     "genome_bp", "scaffold_n50_bp", "n_scaffolds",
     ...FAM.flatMap((f) => [`${f}_func`, `${f}_pseudo`]),
     "total_functional", "total_pseudogene",
-    "OE_shape", "OE_mean_lamellae", "OE_surface_mm2", "OE_ref"];
+    "OE_shape", "OE_mean_lamellae", "OE_n_specimens", "OE_surface_mm2", "OE_ref"];
   const rows = [head.join("\t")];
   for (const g of state.view) {
     rows.push([
@@ -477,7 +495,7 @@ function exportTSV() {
       g.gl, g.n50, g.nsc,
       ...FAM.flatMap((f, i) => [g.fc[i], g.pc[i]]),
       g.tf, g.tp,
-      g.oesh || "", g.oelam, g.oesurf, g.oeref || "",
+      g.oesh || "", g.oelam, g.oen, g.oesurf, g.oeref || "",
     ].map((x) => (x == null ? "" : x)).join("\t"));
   }
   triggerDownload(new Blob([rows.join("\n") + "\n"], { type: "text/tab-separated-values" }),
