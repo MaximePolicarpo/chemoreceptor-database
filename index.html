@@ -13,8 +13,8 @@
     <h1>Vertebrate Chemoreceptor Repertoire Database</h1>
     <p class="tagline">
       Olfactory (OR, V1R, V2R, TAAR) and taste (T1R, T2R) receptor repertoires
-      mined from vertebrate genome assemblies, with genome BUSCO completeness and
-      NCBI taxonomy.
+      mined from vertebrate genome assemblies, combined with olfactory
+      epithelium morphology, genome BUSCO completeness, and NCBI taxonomy.
     </p>
     <div id="stat-strip" class="stat-strip"></div>
   </div>
@@ -56,7 +56,7 @@
         <label class="chk"><input type="checkbox" id="busco-required"> has BUSCO result</label>
       </div>
 
-      <fieldset class="fld">
+      <fieldset class="fld" id="clade-fieldset">
         <span>Vertebrate clade</span>
         <div id="clade-facets" class="facets"></div>
       </fieldset>
@@ -77,8 +77,14 @@
         <div id="family-facets" class="facets facets-inline"></div>
       </fieldset>
 
+      <fieldset class="fld" id="oe-fieldset" hidden>
+        <span>Olfactory epithelium shape</span>
+        <div id="oe-facets" class="facets"></div>
+      </fieldset>
+
       <label class="chk"><input type="checkbox" id="tax-required"> resolved taxonomy only</label>
       <label class="chk"><input type="checkbox" id="complete-required"> complete mining run only</label>
+      <label class="chk" id="oe-required-row" hidden><input type="checkbox" id="oe-required"> has olfactory epithelium data</label>
     </aside>
 
     <section class="results">
@@ -151,6 +157,11 @@
       Sequences are nucleotide CDS. Downloads are grouped as
       <code>functional.fa</code> / <code>pseudogenes.fa</code> per genome;
       FASTA headers are prefixed with the receptor family.
+    </p>
+    <p>
+      Olfactory epithelium (OE) morphology, where shown, is compiled from the
+      published literature and from unpublished data generated in the lab;
+      hover the OE column for the lamellae count and the source reference.
     </p>
   </div>
 </footer>

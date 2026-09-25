@@ -20,6 +20,7 @@ const FAM = ["OR", "V1R", "V2R", "TAAR", "T1R", "T2R"];
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const fmtInt = (n) => (n == null ? "" : n.toLocaleString("en-US"));
+const prettyOE = (s) => (s ? s.replace(/_/g, " ") : "");
 const fmtBp = (n) => {
   if (n == null) return "";
   if (n >= 1e9) return (n / 1e9).toFixed(2) + " Gb";
@@ -63,6 +64,19 @@ const COLS = [
     render: (g) => txt(g.cl || "—") },
   { key: "o", label: "Order", val: (g) => g.o || "￿",
     render: (g) => txt(g.o || "—") },
+  { key: "oesh", label: "Olfactory epithelium", val: (g) => g.oesh || "￿",
+    render: (g) => {
+      if (!g.oesh) return txt("—");
+      const s = document.createElement("span");
+      s.className = "pill";
+      s.textContent = prettyOE(g.oesh);
+      const bits = [];
+      if (g.oelam != null) bits.push(`~${g.oelam} lamellae`);
+      if (g.oesurf != null) bits.push(`${g.oesurf} mm² surface`);
+      if (g.oeref) bits.push(g.oeref);
+      s.title = bits.join("  ·  ");
+      return s;
+    } },
   { key: "bc", label: "BUSCO C%", val: (g) => (g.bc == null ? -1 : g.bc), cls: "num",
     render: (g) => {
       if (g.bc == null) return txt("—");
@@ -147,6 +161,7 @@ function buildStatStrip() {
     [fmtInt(s.n_with_busco), "with BUSCO"],
     [fmtInt(s.n_with_taxonomy), "with taxonomy"],
   ];
+  if (s.n_with_oe != null) items.push([fmtInt(s.n_with_oe), "with OE morphology"]);
   $("#stat-strip").innerHTML = items
     .map(([b, l]) => `<div class="stat"><b>${b}</b><span>${l}</span></div>`)
     .join("");
@@ -159,6 +174,7 @@ function buildStatStrip() {
 
 function buildFacets() {
   const s = state.summary;
+  $("#clade-fieldset").hidden = s.clades.length <= 1;
   $("#clade-facets").innerHTML = s.clades
     .map((c) => facetRow("clade", c, s.clade_counts[c] || 0))
     .join("");
@@ -168,12 +184,20 @@ function buildFacets() {
     .map((f) => facetRow("family", f, "")).join("");
   $("#order-list").innerHTML = s.orders
     .map((o) => `<option value="${esc(o)}">`).join("");
+  const hasOE = Array.isArray(s.oe_shapes) && s.oe_shapes.length > 0;
+  $("#oe-fieldset").hidden = !hasOE;
+  $("#oe-required-row").hidden = !hasOE;
+  if (hasOE) {
+    $("#oe-facets").innerHTML = s.oe_shapes
+      .map((sh) => facetRow("oeshape", sh, s.oe_shape_counts?.[sh] || 0, prettyOE(sh)))
+      .join("");
+  }
 }
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) =>
   ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-function facetRow(group, value, count) {
+function facetRow(group, value, count, label) {
   const cnt = count === "" ? "" : `<span class="fc-count">${fmtInt(count)}</span>`;
-  return `<label><input type="checkbox" data-facet="${group}" value="${esc(value)}"> ${esc(value)} ${cnt}</label>`;
+  return `<label><input type="checkbox" data-facet="${group}" value="${esc(value)}"> ${esc(label ?? value)} ${cnt}</label>`;
 }
 
 /* ---------- filtering ---------- */
@@ -187,9 +211,11 @@ function readFilters() {
     clades: new Set(checked("clade")),
     levels: new Set(checked("level")),
     families: checked("family"),
+    oeShapes: new Set(checked("oeshape")),
     order: $("#order").value.trim().toLowerCase(),
     taxRequired: $("#tax-required").checked,
     completeRequired: $("#complete-required").checked,
+    oeRequired: $("#oe-required") ? $("#oe-required").checked : false,
   };
 }
 
@@ -209,6 +235,8 @@ function passes(g, f) {
   }
   if (f.taxRequired && !g.ht) return false;
   if (f.completeRequired && !g.ok) return false;
+  if (f.oeRequired && !g.oesh) return false;
+  if (f.oeShapes.size && !f.oeShapes.has(g.oesh)) return false;
   return true;
 }
 
@@ -439,7 +467,8 @@ function exportTSV() {
     "assembly_level", "busco_C", "busco_S", "busco_D", "busco_F", "busco_M", "busco_n",
     "genome_bp", "scaffold_n50_bp", "n_scaffolds",
     ...FAM.flatMap((f) => [`${f}_func`, `${f}_pseudo`]),
-    "total_functional", "total_pseudogene"];
+    "total_functional", "total_pseudogene",
+    "OE_shape", "OE_mean_lamellae", "OE_surface_mm2", "OE_ref"];
   const rows = [head.join("\t")];
   for (const g of state.view) {
     rows.push([
@@ -448,6 +477,7 @@ function exportTSV() {
       g.gl, g.n50, g.nsc,
       ...FAM.flatMap((f, i) => [g.fc[i], g.pc[i]]),
       g.tf, g.tp,
+      g.oesh || "", g.oelam, g.oesurf, g.oeref || "",
     ].map((x) => (x == null ? "" : x)).join("\t"));
   }
   triggerDownload(new Blob([rows.join("\n") + "\n"], { type: "text/tab-separated-values" }),
@@ -469,6 +499,7 @@ function wireControls() {
   $("#busco-required").addEventListener("change", apply);
   $("#tax-required").addEventListener("change", apply);
   $("#complete-required").addEventListener("change", apply);
+  if ($("#oe-required")) $("#oe-required").addEventListener("change", apply);
   $("#filters").addEventListener("change", (e) => {
     if (e.target.matches("input[data-facet]")) apply();
   });
