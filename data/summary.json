@@ -1,12 +1,12 @@
 {
- "generated_at": "2026-09-25 12:57 UTC",
- "scope_note": "This preview covers 100 ray-finned fish species, chosen for strong genome completeness and available olfactory-epithelium (OE) morphology data (100 of the 100 shown here; REF column / hover the OE column for the source, including 12 species from an unpublished Lake Tanganyika cichlid dataset). In total I have mined chemoreceptor repertoires from 2,400 ray-finned fish genome assemblies, and compiled OE morphology data for 1,577 ray-finned fish species (from 332 distinct references), as well as olfactory bulb morphology for 310 species (from 21 distinct references).",
- "n_genomes": 100,
- "n_species": 100,
- "n_with_busco": 100,
- "n_with_taxonomy": 100,
- "n_with_oe": 100,
- "n_complete": 100,
+ "generated_at": "2026-09-25 13:07 UTC",
+ "scope_note": "This preview covers 101 ray-finned fish species, chosen for strong genome completeness and available olfactory-epithelium (OE) morphology data (101 of the 101 shown here; REF column / hover the OE column for the source, including 12 species from an unpublished Lake Tanganyika cichlid dataset). In total I have mined chemoreceptor repertoires from 2,400 ray-finned fish genome assemblies, and compiled OE morphology data for 1,577 ray-finned fish species (from 332 distinct references), as well as olfactory bulb morphology for 310 species (from 21 distinct references).",
+ "n_genomes": 101,
+ "n_species": 101,
+ "n_with_busco": 101,
+ "n_with_taxonomy": 101,
+ "n_with_oe": 101,
+ "n_complete": 101,
  "families": [
   "OR",
   "V1R",
@@ -19,7 +19,8 @@
   "Ray-finned fish"
  ],
  "classes": [
-  "Actinopteri"
+  "Actinopteri",
+  "Cladistia"
  ],
  "orders": [
   "Acipenseriformes",
@@ -43,6 +44,7 @@
   "Osteoglossiformes",
   "Perciformes",
   "Pleuronectiformes",
+  "Polypteriformes",
   "Salmoniformes",
   "Scombriformes",
   "Semionotiformes",
@@ -60,38 +62,40 @@
   "Single",
   "Few_parallel",
   "Many_parallel",
-  "Rosette"
+  "Rosette",
+  "Capsule"
  ],
  "busco_min": 75.8,
  "busco_max": 99.9,
  "totals": {
-  "functional": 33230,
-  "pseudogene": 12612
+  "functional": 34517,
+  "pseudogene": 13354
  },
  "per_family_functional": {
-  "OR": 18365,
-  "V1R": 715,
-  "V2R": 6358,
-  "TAAR": 6756,
-  "T1R": 601,
-  "T2R": 435
+  "OR": 18961,
+  "V1R": 765,
+  "V2R": 6521,
+  "TAAR": 7213,
+  "T1R": 607,
+  "T2R": 450
  },
  "per_family_pseudogene": {
-  "OR": 4698,
-  "V1R": 823,
-  "V2R": 2828,
-  "TAAR": 3073,
-  "T1R": 348,
-  "T2R": 842
+  "OR": 4869,
+  "V1R": 845,
+  "V2R": 2924,
+  "TAAR": 3514,
+  "T1R": 349,
+  "T2R": 853
  },
  "clade_counts": {
-  "Ray-finned fish": 100
+  "Ray-finned fish": 101
  },
  "oe_shape_counts": {
   "Flat": 5,
   "Single": 1,
   "Few_parallel": 1,
   "Many_parallel": 6,
-  "Rosette": 87
+  "Rosette": 87,
+  "Capsule": 1
  }
 }
